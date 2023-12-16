@@ -93,7 +93,7 @@ input[type=number] {{font-size: 2rem;}}
 </th>
 </tr>
 </table>
-<p> auto refresh 5 sec to see some load for server </p>
+<p style="color:red;"> auto refresh 5 sec to see some load for server </p>
 <hr>
 </body></html>
 """
@@ -188,6 +188,7 @@ while True:  # ___________________________________________ MAIN
                 run_webserver()  # __________________________________ in main loop it's killing me, better in 1 sec loop
                 check_mem(info = "loop1 after run_webserver",prints=False,coll=True)
 
+        #check_mem(info = "loop1 prior run_webserver",prints=True,coll=False)
         #run_webserver()  # __________________________________ in main loop it's killing me, better in 1 sec loop
 
     except OSError:
@@ -196,24 +197,31 @@ while True:  # ___________________________________________ MAIN
 
 
 '''
+-a-
 1Mloop only
 9.8 sec mem: 47952 mem low: 45072
-
+-b-
 1Mloop and loop1
 18.0 sec mem:47800 mem low: 45206
-
+-c-
 1Mloop and loop1 run_webserver
-18.7 sec mem: 47600 memlow: 47584
-
+18.7 sec mem: 47600 mem low: 47584
+-d-
 1Mloop and loop1 run_webserver and webpage / autorefresh 5 sec
-21.4 sec mem: 52320 memlow: 47584
+21.4 sec mem: 52320 mem low: 47584
 
+no gc.collect at run_webserver mem: 52240 mem low:46672
+-e-
 need change loopt1 from 1000 to 10 to have a 1 sec tick
 run_webserver in main loop ( delete 2 front [tab] )
 1Mloop and loop1
 226.1 sec mem: 52480 mem low: 18912
-
+-e+f-
 start webpage / autorefresh 5 sec but sometimes need 20 sec?
 233.4 sec mem: 52480 mem low: 27872
+-e+f+g-
+test mem for it without gc.collect
+mem: 52160 mem low: 672 ? // mem runs down but autorecovers ?
 
+!!! server.poll() is a timing and memory pig !!!
 '''

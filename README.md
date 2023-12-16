@@ -50,6 +50,7 @@ mem: 52160 mem low: 672 ? // mem runs down but autorecovers ?<br>
 
 !!! server.poll() is a timing and memory pig !!!<br>
 
+[memory downloop](http://kll.byethost7.com/kllfusion01/downloads/server_poll_memory.png)
 
 test 2
 

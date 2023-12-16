@@ -49,3 +49,23 @@ test mem for it without gc.collect<br>
 mem: 52160 mem low: 672 ? // mem runs down but autorecovers ?<br>
 
 !!! server.poll() is a timing and memory pig !!!<br>
+
+
+test 2
+
+replace /adafruit_httpserver/server.mpy with server.py<br>
+from https://github.com/adafruit/Adafruit_CircuitPython_HTTPServer/blame/main/adafruit_httpserver/server.py<br>
+? how i know that is the one used in adafruit-circuitpython-bundle-9.x-mpy-20231215.zip<br>
+
+change:<br>
+    def __init__(<br>
+        self, socket_source: Protocol, root_path: str = None, *, debug: bool = True # KLL test False<br>
+    ) -> None:<br>
+see:<br>
+www served dynamic index.html<br>
+192.168.1.8 -- "GET /" 373 -- "200 OK" 1174 -- 293ms<br>
+BUT<br>
+
+            if self.debug:<br>
+                _debug_response_sent(response, _debug_end_time - _debug_start_time)<br>
+i not see?<br>

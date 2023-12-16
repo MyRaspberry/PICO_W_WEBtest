@@ -13,13 +13,14 @@ adafruit-circuitpython-bundle-9.x-mpy-20231215.zip
 boot_out.txt
 ```
 Adafruit CircuitPython 9.0.0-alpha.6 on 2023-12-12; Raspberry Pi Pico W with rp2040
+
 Board ID:raspberry_pi_pico_w
 
 ```
 
 
 testresults:
-'''
+
 -a-
 1Mloop only
 9.8 sec mem: 47952 mem low: 45072
@@ -47,4 +48,3 @@ test mem for it without gc.collect
 mem: 52160 mem low: 672 ? // mem runs down but autorecovers ?
 
 !!! server.poll() is a timing and memory pig !!!
-'''  

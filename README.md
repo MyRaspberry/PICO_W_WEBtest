@@ -69,4 +69,4 @@ BUT<br>
 
             if self.debug:<br>
                 _debug_response_sent(response, _debug_end_time - _debug_start_time)<br>
-i not see?<br>
+i not see for every poll(), only for page request, how to do?<br>

@@ -20,7 +20,7 @@ Board ID:raspberry_pi_pico_w
 ```
 
 
-testresults:
+test 1 results:
 
 -a-<br>
 1Mloop only<br>
@@ -71,3 +71,13 @@ BUT<br>
                 _debug_response_sent(response, _debug_end_time - _debug_start_time)
 ```
 i not see timing for every poll(), only for page request, how to do?<br>
+
+test 3
+
+asyncio
+
+import failed about 
+```
+  File "asyncio/core.py", line 18, in <module>
+ImportError: no module named 'adafruit_ticks'
+```

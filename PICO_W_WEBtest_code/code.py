@@ -8,9 +8,21 @@ import adafruit_ntp # use NTP time to set PICO W RTC
 import socketpool
 from ipaddress import ip_address
 import wifi
-from adafruit_httpserver import Server, Request, Response, Redirect, GET, POST
+from adafruit_httpserver import Server, Request, Response, Redirect, GET, POST, Websocket
 import micropython
 import microcontroller # for board reboot
+
+# test3 async
+#from asyncio import create_task, gather, run, sleep as async_sleep
+'''
+Traceback (most recent call last):
+  File "code.py", line 15, in <module>
+  File "asyncio/__init__.py", line 14, in <module>
+  File "asyncio/core.py", line 18, in <module>
+ImportError: no module named 'adafruit_ticks'
+
+Code done running.
+'''
 
 DIAG = True # False # ___________________________________ global print disable switch / overwritten by console [D][enter]
 DIAG = bool(os.getenv('DIAG')) # ______________________________ now get from settings.toml
@@ -136,6 +148,40 @@ def setup_webserver() :
             )
     server.start(str(wifi.radio.ipv4_address)) # _________ startup the server
 
+'''
+async def handle_http_requests():
+    while True:
+        server.poll()
+
+        await async_sleep(0)
+
+async def handle_websocket_requests():
+    while True:
+        if websocket is not None:
+            if (data := websocket.receive(fail_silently=True)) is not None:
+                r, g, b = int(data[1:3], 16), int(data[3:5], 16), int(data[5:7], 16)
+                pixel.fill((r, g, b))
+
+        await async_sleep(0)
+
+
+async def send_websocket_messages():
+    while True:
+        if websocket is not None:
+            cpu_temp = round(microcontroller.cpu.temperature, 2)
+            websocket.send_message(str(cpu_temp), fail_silently=True)
+
+        await async_sleep(1)
+
+
+async def main():
+    await gather(
+        create_task(handle_http_requests()),
+        #create_task(handle_websocket_requests()),
+        #create_task(send_websocket_messages()),
+    )
+'''
+
 def run_webserver() :
     global server
     try:
@@ -163,6 +209,8 @@ loop1 = 0
 loopt1 = 10  # _________________________________________ we can read time every loop OR every loopt loop only, makes the 1M faster/ but timer more inaccurate
 update1 = 1.0  # _________________________________________ every 1 sec do
 
+
+#run(main()) # ____________________________________________ async test3
 
 while True:  # ___________________________________________ MAIN
     try:
@@ -249,4 +297,7 @@ BUT
             if self.debug:
                 _debug_response_sent(response, _debug_end_time - _debug_start_time)
 i not see like for every poll?
+
+test3 asyncio failed import
+
 '''

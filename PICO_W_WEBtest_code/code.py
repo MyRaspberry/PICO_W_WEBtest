@@ -118,7 +118,7 @@ def setup_webserver() :
     show_time()
 
     # ____________________________________________________ make a WEB SERVER
-    server = Server(pool, "/static") #, debug=True)
+    server = Server(pool, "/static", debug=True)
 
     @server.route("/")
     def base(request):  # pylint: disable=unused-argument
@@ -136,8 +136,8 @@ def setup_webserver() :
 def run_webserver() :
     global server
     try:
-        server.poll()
-
+        ret = server.poll()
+        #dp(ret)
     except OSError:
         print("ERROR server poll")
         # _________________________________________________ here do a reboot
@@ -184,12 +184,12 @@ while True:  # ___________________________________________ MAIN
                 start_s1 += 1.0
                 # here a 1 sec job
 
-                check_mem(info = "loop1 prior run_webserver",prints=False,coll=True)
-                run_webserver()  # __________________________________ in main loop it's killing me, better in 1 sec loop
-                check_mem(info = "loop1 after run_webserver",prints=False,coll=True)
+                #check_mem(info = "loop1 prior run_webserver",prints=False,coll=True)
+                #run_webserver()  # __________________________________ in main loop it's killing me, better in 1 sec loop
+                #check_mem(info = "loop1 after run_webserver",prints=False,coll=True)
 
-        #check_mem(info = "loop1 prior run_webserver",prints=True,coll=False)
-        #run_webserver()  # __________________________________ in main loop it's killing me, better in 1 sec loop
+        check_mem(info = "loop1 prior run_webserver",prints=True,coll=False)
+        run_webserver()  # __________________________________ in main loop it's killing me, better in 1 sec loop
 
     except OSError:
         microcontroller.reset()
@@ -224,4 +224,24 @@ test mem for it without gc.collect
 mem: 52160 mem low: 672 ? // mem runs down but autorecovers ?
 
 !!! server.poll() is a timing and memory pig !!!
+'''
+
+'''
+test 2
+replace /adafruit_httpserver/server.mpy with server.py
+from https://github.com/adafruit/Adafruit_CircuitPython_HTTPServer/blame/main/adafruit_httpserver/server.py
+? how i know that is the one used in adafruit-circuitpython-bundle-9.x-mpy-20231215.zip
+
+change:
+    def __init__(
+        self, socket_source: Protocol, root_path: str = None, *, debug: bool = True # KLL test False
+    ) -> None:
+see:
+www served dynamic index.html
+192.168.1.8 -- "GET /" 373 -- "200 OK" 1174 -- 293ms
+BUT
+
+            if self.debug:
+                _debug_response_sent(response, _debug_end_time - _debug_start_time)
+i not see like for every poll?
 '''

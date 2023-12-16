@@ -4,7 +4,7 @@ import time  # ___________________________________________ we use time.monotonic
 import gc # micropython garbage collection # use gc.mem_free() # use gc.collect()
 from adafruit_datetime import  datetime
 import rtc
-import adafruit_ntp # V1.0.2 b use NTP time to set PICO W RTC
+import adafruit_ntp # use NTP time to set PICO W RTC
 import socketpool
 from ipaddress import ip_address
 import wifi
@@ -17,16 +17,6 @@ DIAG = bool(os.getenv('DIAG')) # ______________________________ now get from set
 
 def dp(line=" ", ende="\n"):
     if DIAG : print(line, end=ende)
-
-def check_mem(info="",prints=True,coll=True) :
-    if prints :
-        dp("\n___ {:} check mem   : {:}".format( info, gc.mem_free()) )
-    if coll :
-        gc.collect()
-    if ( prints and coll ) :
-        dp("___ after clear : {:}".format( gc.mem_free()) )
-
-# call:     check_mem(info = " JOBx after y",prints=True,coll=True)
 
 THIS_REVISION = os.getenv('THIS_REVISION')
 THIS_OS = os.getenv('THIS_OS')
@@ -50,16 +40,29 @@ def get_network_time():
 
 def show_time(lDIAG=True):
     if  (useNTP == 1 ) :
-        #print(time.localtime())
         tnow = datetime.now()
-        tnows = tnow.isoformat()
-        tnows = tnows.replace("T"," ")
+        tnows = tnow.isoformat(sep=' ')
         if lDIAG:
             dp(tnows)
         return tnows
     else :
         return " "
 
+def check_mem(timestamps=True,info="",prints=True,coll=True) :
+    times=""
+    if ( timestamps ) :
+        times = show_time(lDIAG=False)
+    if prints :
+        freeold=gc.mem_free()
+    if coll :
+        gc.collect()
+        if ( prints ) :
+            dp("\n___ {0} {1} check mem   : {2} after clear : {3} ".format( times, info, freeold, gc.mem_free()) )
+    else:
+        if ( prints ) :
+            dp("\n___ {0} {1} check mem   : {2} ".format( times, info, freeold) )
+
+# call:     check_mem(timestamps=True,info = " JOBx after y",prints=True,coll=True)
 
 
 
@@ -184,12 +187,14 @@ while True:  # ___________________________________________ MAIN
                 start_s1 += 1.0
                 # here a 1 sec job
 
-                #check_mem(info = "loop1 prior run_webserver",prints=False,coll=True)
-                #run_webserver()  # __________________________________ in main loop it's killing me, better in 1 sec loop
-                #check_mem(info = "loop1 after run_webserver",prints=False,coll=True)
+                check_mem(timestamps=True,info = "loop1 prior run_webserver",prints=False,coll=True)
+                #now_check = time.monotonic() # as server diag no help we check time here
+                run_webserver()  # __________________________________ in main loop it's killing me, better in 1 sec loop
+                #dp("dt: {:>7.4f} sec".format( time.monotonic() - now_check ) )
+                check_mem(info = "loop1 after run_webserver",prints=False,coll=True)
 
-        check_mem(info = "loop1 prior run_webserver",prints=True,coll=False)
-        run_webserver()  # __________________________________ in main loop it's killing me, better in 1 sec loop
+        #check_mem(info = "MAIN prior run_webserver",prints=True,coll=False)
+        #run_webserver()  # __________________________________ in main loop it's killing me, better in 1 sec loop
 
     except OSError:
         microcontroller.reset()

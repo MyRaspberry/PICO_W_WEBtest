@@ -66,7 +66,8 @@ see:<br>
 www served dynamic index.html<br>
 192.168.1.8 -- "GET /" 373 -- "200 OK" 1174 -- 293ms<br>
 BUT<br>
-
-            if self.debug:<br>
-                _debug_response_sent(response, _debug_end_time - _debug_start_time)<br>
-i not see for every poll(), only for page request, how to do?<br>
+```
+            if self.debug:
+                _debug_response_sent(response, _debug_end_time - _debug_start_time)
+```
+i not see timing for every poll(), only for page request, how to do?<br>

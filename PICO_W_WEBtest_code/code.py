@@ -1,34 +1,54 @@
-# ________________________________________________________ TimerCheck CP900a6 http-server server.poll
-import os
-import time  # ___________________________________________ we use time.monotonic aka seconds in float
-import gc # micropython garbage collection # use gc.mem_free() # use gc.collect()
-from adafruit_datetime import  datetime
-import rtc
-import adafruit_ntp # use NTP time to set PICO W RTC
-import socketpool
-from ipaddress import ip_address
-import wifi
-from adafruit_httpserver import Server, Request, Response, Redirect, GET, POST, Websocket
-import micropython
-import microcontroller # for board reboot
-
-# test3 async
-#from asyncio import create_task, gather, run, sleep as async_sleep
+#SH_T
 '''
+no, that is not bad talking, it is to be enabled ( remove # ) and [SAVE]
+and that will lead to a RELOAD and FAIL with a error msg.
+***
 Traceback (most recent call last):
-  File "code.py", line 15, in <module>
-  File "asyncio/__init__.py", line 14, in <module>
-  File "asyncio/core.py", line 18, in <module>
-ImportError: no module named 'adafruit_ticks'
-
-Code done running.
+  File "code.py", line 1, in <module>
+NameError: name 'SH_T' is not defined
+***
+so you can scroll up in the REPL and read and save old msg's from there
+WHY THAT? well, for me the [ctrl][c] in MU-Editor REPL to stop program execution does NOT always work,
+and this is my workaround: just force load broken code LOL
 '''
+
+# ________________________________________________________ TimerCheck CP900a6 http-server server.poll
+
+import gc # micropython garbage collection # use gc.mem_free() # use gc.collect()
+print(f"\nFREE MEM report after imports\n+ import gc {gc.mem_free()} ")
+import os
+print(f"+ import os {gc.mem_free()} ")
+import time  # ___________________________________________ we use time.monotonic aka seconds in float
+print(f"+ import time {gc.mem_free()} ")
+from adafruit_datetime import  datetime
+print(f"+ from adafruit_datetime import  datetime {gc.mem_free()} ")
+import rtc
+print(f"+ import rtc {gc.mem_free()} ")
+import adafruit_ntp # use NTP time to set PICO W RTC
+print(f"+ import adafruit_ntp {gc.mem_free()} ")
+import socketpool
+print(f"+ import socketpool {gc.mem_free()} ")
+from ipaddress import ip_address
+print(f"+ from ipaddress {gc.mem_free()} ")
+import wifi
+print(f"+ import wifi {gc.mem_free()} ")
+from adafruit_httpserver import Server, Request, Response, Redirect, GET, POST # , Websocket
+print(f"+ from adafruit_httpserver import Server, Request, Response, Redirect, GET, POST {gc.mem_free()} ")
+import micropython
+print(f"+ import micropython {gc.mem_free()} ")
+import microcontroller # for board reboot
+print(f"+ import microcontroller {gc.mem_free()} ")
+
+# test3 async for server.poll
+#import adafruit_ticks
+#from asyncio import create_task, gather, run, sleep as async_sleep
 
 DIAG = True # False # ___________________________________ global print disable switch / overwritten by console [D][enter]
 DIAG = bool(os.getenv('DIAG')) # ______________________________ now get from settings.toml
 
 def dp(line=" ", ende="\n"):
     if DIAG : print(line, end=ende)
+
 
 THIS_REVISION = os.getenv('THIS_REVISION')
 THIS_OS = os.getenv('THIS_OS')
@@ -77,6 +97,7 @@ def check_mem(timestamps=True,info="",prints=True,coll=True) :
 # call:     check_mem(timestamps=True,info = " JOBx after y",prints=True,coll=True)
 
 
+REFRESH = 5
 
 # ______________________________ at the HTML STYLE section i had to escape the { , } by {{ , }}
 HTML_INDEX = """
@@ -92,7 +113,7 @@ p.dotted {{margin: auto; width: 75%; font-size: 25px; text-align: center;}}
 form {{font-size: 2rem; }}
 input[type=number] {{font-size: 2rem;}}
 </style>
-<meta http-equiv="refresh" content="5">
+<meta http-equiv="refresh" content="{REFRESH}">
 </head><body>
 <h1>Pico W Web Server from Circuit Python {THIS_OS} </h1>
 <img src="https://www.raspberrypi.com/documentation/microcontrollers/images/picow-pinout.svg" >
@@ -143,6 +164,7 @@ def setup_webserver() :
             HTML_INDEX.format(
                 THIS_OS=THIS_OS,
                 THIS_REVISION=THIS_REVISION,
+                REFRESH=REFRESH,
                 ),
                 content_type='text/html'
             )
@@ -206,7 +228,7 @@ secdotprint = True
 # ________________________________________________________ we run a loop1 counter and check at 1 sec
 start_s1 = time.monotonic()
 loop1 = 0
-loopt1 = 10  # _________________________________________ we can read time every loop OR every loopt loop only, makes the 1M faster/ but timer more inaccurate
+loopt1 = 1000  # _________________________________________ we can read time every loop OR every loopt loop only, makes the 1M faster/ but timer more inaccurate
 update1 = 1.0  # _________________________________________ every 1 sec do
 
 
@@ -250,6 +272,22 @@ while True:  # ___________________________________________ MAIN
 
 
 '''
+for CP900a6:
+
+FREE MEM report after imports
++ import gc 124048
++ import os 123920
++ import time 123840
++ from adafruit_datetime import  datetime 99232
++ import rtc 99120
++ import adafruit_ntp 98192
++ import socketpool 98112
++ from ipaddress 98000
++ import wifi 97920
++ from adafruit_httpserver import Server, Request, Response, Redirect, GET, POST 53376
++ import micropython 53216
++ import microcontroller 53088
+
 -a-
 1Mloop only
 9.8 sec mem: 47952 mem low: 45072
@@ -277,27 +315,13 @@ test mem for it without gc.collect
 mem: 52160 mem low: 672 ? // mem runs down but autorecovers ?
 
 !!! server.poll() is a timing and memory pig !!!
-'''
 
-'''
-test 2
-replace /adafruit_httpserver/server.mpy with server.py
-from https://github.com/adafruit/Adafruit_CircuitPython_HTTPServer/blame/main/adafruit_httpserver/server.py
-? how i know that is the one used in adafruit-circuitpython-bundle-9.x-mpy-20231215.zip
+# _______________________
+test2 deleted
+# _______________________
+IN HOLD
+test3 asyncio
+import async and ticks  OK
 
-change:
-    def __init__(
-        self, socket_source: Protocol, root_path: str = None, *, debug: bool = True # KLL test False
-    ) -> None:
-see:
-www served dynamic index.html
-192.168.1.8 -- "GET /" 373 -- "200 OK" 1174 -- 293ms
-BUT
-
-            if self.debug:
-                _debug_response_sent(response, _debug_end_time - _debug_start_time)
-i not see like for every poll?
-
-test3 asyncio failed import
 
 '''
